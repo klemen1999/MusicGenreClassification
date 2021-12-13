@@ -7,6 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from sklearn import preprocessing
 
 LABELS = ["Blues", "Classical", "Country", "Disco", "HipHop", "Jazz", "Metal", "Pop", "Reaggea", "Rock"]
 
@@ -32,31 +33,31 @@ def evalBaseline(y_test):
     y_pred = np.array([0]*y_test.shape[0])
     return y_pred
 
-def evalKnn(X_train, X_test, y_train, n=5):
-    knn = KNeighborsClassifier(n_neighbors=n)
+def evalKnn(X_train, X_test, y_train, k=5):
+    knn = KNeighborsClassifier(n_neighbors=k)
     model = knn.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_pred
 
 def evalRandomForest(X_train, X_test, y_train, n=100):
-    rf = RandomForestClassifier(n_estimators=n)
+    rf = RandomForestClassifier(n_estimators=n, random_state=42)
     model = rf.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_pred
 
 def evalLogRegression(X_train, X_test, y_train):
-    logReg = LogisticRegression()
+    logReg = LogisticRegression(random_state=42)
     model = logReg.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_pred
 
-def evalSVM(X_train, X_test, y_train):
-    svm = SVC(kernel='linear')
+def evalSVM(X_train, X_test, y_train, kernel="rbf",c=1):
+    svm = SVC(C=c, kernel=kernel, random_state=42)
     model = svm.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     return y_pred
 
-def evalXGB(X_train, X_test, y_train):
+def evalGB(X_train, X_test, y_train):
     xgb = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
     model = xgb.fit(X_train, y_train)
     y_pred = model.predict(X_test)
@@ -68,23 +69,29 @@ if __name__ == "__main__":
 
     # Split into train and test
     data = df.drop(["path", "class"], axis=1)
+    scaler = preprocessing.StandardScaler()
+    # # To get normal distribution
+    # scalerQuantile = preprocessing.QuantileTransformer(output_distribution='normal', random_state=0)
+    data[data.columns] = scaler.fit_transform(data[data.columns])
+
+
     X = data.to_numpy()
     y = df["class"].to_numpy()
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, shuffle=True, stratify=y)
 
-    currentModel = "XGB"
+    currentModel = "SVM"
     if currentModel == "baseline":
         y_pred = evalBaseline(y_test)
     elif currentModel == "kNN":
-        y_pred = evalKnn(X_train, X_test, y_train, 5)
+        y_pred = evalKnn(X_train, X_test, y_train, 7)
     elif currentModel == "randomForest":
-        y_pred = evalRandomForest(X_train, X_test, y_train, 100)
+        y_pred = evalRandomForest(X_train, X_test, y_train, 170)
     elif currentModel == "logRegression":
         y_pred = evalLogRegression(X_train, X_test, y_train)
     elif currentModel == "SVM":
-        y_pred = evalSVM(X_train, X_test, y_train)
-    elif currentModel == "XGB":
-        y_pred = evalXGB(X_train, X_test, y_train)
+        y_pred = evalSVM(X_train, X_test, y_train, kernel="rbf", c=4.5)
+    elif currentModel == "GB":
+        y_pred = evalGB(X_train, X_test, y_train)
 
     getMetrics(y_pred, y_test, currentModel)
-    vizConfusionMat(y_pred, y_test, currentModel)
+    # vizConfusionMat(y_pred, y_test, currentModel)
