@@ -12,8 +12,9 @@ Project for machine learning course where the goal is to classify music into the
 - [x] Vizualize with PCA or t-SNE
 - [ ] Run traditional machine learning algorithms (k-NN, Random Forest, Gradient Boosting, SVM, Logistical Regression)
   - [x] Preliminary run with default parameters
-  - [ ] Evaluate features with relifF or similar 
-  - [ ] Find the best parameters for each method
+  - [x] Evaluate features with relifF or similar 
+  - [x] Find the best parameters for each method
+  - [ ] Save results
 - [ ] Extract image features from data
 - [ ] Run different CNNs on image data
 - [ ] To be continued
