@@ -2,7 +2,6 @@
 
 Project for machine learning course where the goal is to classify music into the right genre.
 
-# IMPORTANT: when choosing best parameters for k-NN, RF,... use validation set
 ## TODO
 - [x] Data exploration
   - [x] Read music file
