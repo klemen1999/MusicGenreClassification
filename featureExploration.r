@@ -1,13 +1,10 @@
-setwd("D:/Šola/FRI MAG 1.letnik/Strojno uèenje/MusicGenreClassification/")
-data <- read.csv("trainGTZAN.csv")
-data$X <- NULL
-#head(data)
+data <- read.csv("trainGTZAN.csv", check.names = FALSE)
 
-source("D:/Šola/FRI MAG 1.letnik/Strojno uèenje/vaje/evalAttr.R")
+source("evalAttr.R")
 
 data <- data[,c(ncol(data),(2:ncol(data)-1))]
-#head(data)
 data$class <- as.factor(data$class)
+#head(data)
 
 featureScore <- sort(evalAttr(class ~ ., data, "ReliefF", reliefIters=1000, reliefK = 100), decreasing = T)
 

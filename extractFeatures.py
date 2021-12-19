@@ -48,7 +48,7 @@ def extractFeatures(path, SR=22050, HOP_LEN = 256, FRAME_LEN = 512):
 if __name__ == '__main__':
     
     columns = ["path", "rmse-mean", "rmse-std", "zero-cross-rate-mean", "zero-cross-rate-std", "tempo", "spectral-centroid-mean", "spectral-centroid-std",
-    "spectral-bandwith-mean", "spectral-bandwith.std", "spectral-rolloff-mean", "spectral-rolloff-std", "spectral-contrast1-mean", "spectral-contrast1-std",
+    "spectral-bandwith-mean", "spectral-bandwith-std", "spectral-rolloff-mean", "spectral-rolloff-std", "spectral-contrast1-mean", "spectral-contrast1-std",
     "spectral-contrast2-mean", "spectral-contrast2-std","spectral-contrast3-mean", "spectral-contrast3-std","spectral-contrast4-mean", "spectral-contrast4-std",
     "spectral-contrast5-mean", "spectral-contrast5-std","spectral-contrast6-mean", "spectral-contrast6-std","spectral-contrast7-mean", "spectral-contrast7-std",
     "chroma1-mean", "chroma1-std", "chroma2-mean", "chroma2-std", "chroma3-mean", "chroma3-std", "chroma4-mean", "chroma4-std", "chroma5-mean", "chroma5-std",
