@@ -10,14 +10,14 @@ Project for machine learning course where the goal is to classify music into the
   - [x] Extract frequency domain features
 - [x] Extract features from data and save them in dataframe
 - [x] Vizualize with PCA or t-SNE
-- [ ] Run traditional machine learning algorithms (k-NN, Random Forest, Gradient Boosting, SVM, Logistical Regression)
+- [x] Run traditional machine learning algorithms (k-NN, Random Forest, Gradient Boosting, SVM, Logistical Regression)
   - [x] Preliminary run with default parameters
   - [x] Evaluate features with relifF or similar 
   - [x] Find the best parameters for each method
-  - [ ] Save results
+  - [x] Save results
 - [ ] Extract image features from data
 - [ ] Run different CNNs on image data
-- [ ] To be continued
+- [ ] Run experiment on different dataset as well
 
 ## Helpful Links and References
 

@@ -1,4 +1,6 @@
-data <- read.csv("trainGTZAN.csv", check.names = FALSE)
+data <- read.csv("trainGTZAN.csv")
+
+names(data) <- gsub(x = names(data), pattern = "\\.", replacement = "-")  
 
 source("evalAttr.R")
 
@@ -11,3 +13,4 @@ featureScore <- sort(evalAttr(class ~ ., data, "ReliefF", reliefIters=1000, reli
 featureDf = data.frame(featureScore)
 
 write.table(featureDf,file="featureImportance.csv",quote=F, sep=";", col.names=F)
+
