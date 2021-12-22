@@ -1,4 +1,4 @@
-data <- read.csv("trainGTZAN.csv")
+data <- read.csv("./GTZAN/trainGTZAN.csv")
 
 names(data) <- gsub(x = names(data), pattern = "\\.", replacement = "-")  
 

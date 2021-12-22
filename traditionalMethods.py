@@ -11,7 +11,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn import preprocessing
 
-LABELS = ["Blues", "Classical", "Country", "Disco", "HipHop", "Jazz", "Metal", "Pop", "Reaggea", "Rock"]
+LABELS = ["Blues", "Classical", "Country", "Disco", "HipHop", "Jazz", "Metal", "Pop", "Reggae", "Rock"]
 
 def getMetrics(y_pred, y_test, modelName, returnRow=False):
     acc = accuracy_score(y_pred, y_test)
@@ -34,7 +34,7 @@ def vizConfusionMat(y_pred, y_test, currentModel, save=False):
     plt.title(currentModel)
     plt.xticks(rotation = 90)
     plt.tight_layout()
-    plt.savefig(f"./results/{currentModel}.jpg") if save else plt.show()
+    plt.savefig(f"./GTZAN/results/{currentModel}.jpg") if save else plt.show()
 
 def evalBaseline(y_test):
     y_pred = np.array([0]*y_test.shape[0])
@@ -78,7 +78,7 @@ def evalPerceptron(X_train, X_test, y_train, hLayerSize=30, numIter=200):
 
 if __name__ == "__main__":
     # Load data
-    df = pd.read_pickle("rawFeaturesGTZAN.pkl")
+    df = pd.read_pickle("./GTZAN/rawFeaturesGTZAN.pkl")
 
     # Split into train and test
     data = df.drop(["path", "class"], axis=1)
@@ -113,4 +113,4 @@ if __name__ == "__main__":
         newRow = getMetrics(y_pred, y_test, currentModel, returnRow=True)
         results.loc[len(results)] = newRow
 
-    results.to_csv("./results/tabel.csv", index=False)
+    results.to_csv("./GTZAN/results/tabel.csv", index=False)

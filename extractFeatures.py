@@ -3,7 +3,10 @@ import os
 import pandas as pd
 import numpy as np
 import librosa
+import librosa.display
 from tqdm import tqdm
+import matplotlib
+import matplotlib.pyplot as plt
 
 DATASET = "./datasetGTZAN"
 
@@ -45,6 +48,36 @@ def extractFeatures(path, SR=22050, HOP_LEN = 256, FRAME_LEN = 512):
     return features
 
 
+def extractImages(pathList, SR=22050, HOP_LEN = 256, FRAME_LEN = 512):
+    path, songName = pathList
+    x, _ = librosa.load(path, sr=SR)
+
+    # Spectrogram
+    stft = librosa.stft(x, n_fft=FRAME_LEN, hop_length=HOP_LEN)
+    stft_db = librosa.amplitude_to_db(abs(stft))
+    _, ax = plt.subplots(dpi=128)
+    librosa.display.specshow(stft_db, y_axis="log", sr=SR)
+    ax.set_axis_off()
+    plt.savefig(os.path.join("./GTZAN/spectrogram",songName+".png"),bbox_inches='tight', pad_inches=0)
+
+    # Mel-Spectrogram
+    melStft = librosa.feature.melspectrogram(x, sr=SR, n_fft=FRAME_LEN, hop_length=HOP_LEN)
+    melStft_db = librosa.amplitude_to_db(abs(melStft))
+    _, ax = plt.subplots(dpi=128)
+    librosa.display.specshow(melStft_db, y_axis="mel", sr=SR)
+    ax.set_axis_off()
+    plt.savefig(os.path.join("./GTZAN/melSpectrogram",songName+".png"),bbox_inches='tight', pad_inches=0)
+
+    # Mel-MFCC
+    mfcc = librosa.feature.mfcc(x, sr=SR, n_mfcc=20)
+    mfcc_db = librosa.amplitude_to_db(abs(mfcc))
+    _, ax = plt.subplots(dpi=128)
+    librosa.display.specshow(mfcc_db, y_axis="mel", sr=SR)
+    ax.set_axis_off()
+    plt.savefig(os.path.join("./GTZAN/mfcc",songName+".png"),bbox_inches='tight', pad_inches=0)
+    plt.close("all")
+
+
 if __name__ == '__main__':
     
     columns = ["path", "rmse-mean", "rmse-std", "zero-cross-rate-mean", "zero-cross-rate-std", "tempo", "spectral-centroid-mean", "spectral-centroid-std",
@@ -59,17 +92,31 @@ if __name__ == '__main__':
     "mfcc14-mean", "mfcc14-std", "mfcc15-mean", "mfcc15-std", "mfcc16-mean", "mfcc16-std", "mfcc17-mean", "mfcc17-std", "mfcc18-mean", "mfcc18-std", "mfcc19-mean",
     "mfcc19-std", "mfcc20-mean", "mfcc20-std", "class"]
 
+
+    # FOR EXTRACTING FEATURES
+    # paths = []
+    # for i, genre in enumerate(os.listdir(DATASET)):
+    #     for song in os.listdir(os.path.join(DATASET, genre)):
+    #         songPath = os.path.join(DATASET, genre, song)
+    #         paths.append([songPath, i])
+    # data = []
+    # for path, targetClass in tqdm(paths):
+    #     features = extractFeatures(path)
+    #     features.append(targetClass)
+    #     data.append(features)
+
+    # df = pd.DataFrame(data=data, columns=columns)
+    # df.to_pickle("rawFeaturesGTZAN.pkl")
+
+
+    # FOR EXTRACTING IMAGES
     paths = []
     for i, genre in enumerate(os.listdir(DATASET)):
         for song in os.listdir(os.path.join(DATASET, genre)):
             songPath = os.path.join(DATASET, genre, song)
-            paths.append([songPath, i])
-
-    data = []
-    for path, targetClass in tqdm(paths):
-        features = extractFeatures(path)
-        features.append(targetClass)
-        data.append(features)
-
-    df = pd.DataFrame(data=data, columns=columns)
-    df.to_pickle("rawFeaturesGTZAN.pkl")
+            songName = ".".join(song.split(".")[:-1])
+            paths.append([songPath, songName])
+    
+    matplotlib.use("Agg")
+    for path in tqdm(paths):
+        extractImages(path)
