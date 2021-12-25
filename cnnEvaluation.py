@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import json
 from tqdm import tqdm
 
-DATA_FOLDER = "./GTZAN/spectrogram"
+DATA_FOLDER = "./GTZAN/melSpectrogram"
 LABELS = {"blues":0, "classical":1, "country":2, "disco":3, "hiphop":4, "jazz":5, "metal":6, "pop":7, "reggae":8, "rock":9}
 
 IMAGE_HEIGHT = 400
@@ -15,7 +15,7 @@ IMAGE_WIDTH = 600
 TEST_RATIO = 0.25
 VAL_RATIO = 0.15
 
-MODEL_NAME = "firstModel"
+MODEL_NAME = "melSpectrogramModel"
 
 def load_image(filename, label):
     image = tf.io.read_file(filename)
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     dataset_test = tf.data.Dataset.from_tensor_slices((filenames_test, labels_test))
     test_images = dataset_test.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).map(normalize)
 
-    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0010.h5")
+    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0050.h5")
 
     labels_pred = []
     for element in tqdm(test_images.as_numpy_iterator()):

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import json
 
-DATA_FOLDER = "./GTZAN/spectrogram"
+DATA_FOLDER = "./GTZAN/mfcc"
 LABELS = {"blues":0, "classical":1, "country":2, "disco":3, "hiphop":4, "jazz":5, "metal":6, "pop":7, "reggae":8, "rock":9}
 
 IMAGE_HEIGHT = 400
@@ -16,7 +16,7 @@ VAL_RATIO = 0.15
 BATCH_SIZE = 16
 EPOCHS = 50
 
-MODEL_NAME = "firstModel"
+MODEL_NAME = "mfccModel"
 
 def load_image(filename, label):
     image = tf.io.read_file(filename)
@@ -55,48 +55,34 @@ def display_images_from_dataset(dataset):
     plt.show()
 
 
+
+# Source: https://github.com/chittalpatel/Music-Genre-Classification-GTZAN/blob/master/Music%20Genre%20Classification/CNN_train(1).ipynb
+def conv_block(x, n_filters,filter_size=(3, 3), pool_size=(2, 2),stride=(1, 1)):
+    x = tf.keras.layers.Conv2D(n_filters, filter_size, strides=(1, 1), padding='same')(x)
+    x = tf.keras.layers.Activation('relu')(x)
+    x = tf.keras.layers.MaxPooling2D(pool_size=pool_size, strides=stride)(x)
+    x = tf.keras.layers.Dropout(0.4)(x)
+    return x
+
 def build_model(input_shape):
-    """Generates CNN model
-    :param input_shape (tuple): Shape of input set
-    :return model: CNN model
-    """
-    # build network topology
-    model = tf.keras.Sequential()
+    inpt = tf.keras.layers.Input(shape=input_shape)
+    x = conv_block(inpt, 16,stride=(2,2))
+    x = conv_block(x, 32,filter_size=(3,3),stride=(2,2))
+    x = conv_block(x, 64, stride=(2,2))
+    x = conv_block(x, 128,filter_size=(3,3),stride=(2,2))
+    x = conv_block(x, 256,stride=(2,2))
 
-    # 1st conv layer
-    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
-    model.add(tf.keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same'))
-    model.add(tf.keras.layers.BatchNormalization())
-    # 2nd convtf. layer
-    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation='relu'))
-    model.add(tf.keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding='same'))
-    model.add(tf.keras.layers.BatchNormalization())
-    # 3rd convtf. layer
-    model.add(tf.keras.layers.Conv2D(32, (2, 2), activation='relu'))
-    model.add(tf.keras.layers.MaxPooling2D((2, 2), strides=(2, 2), padding='same'))
-    model.add(tf.keras.layers.BatchNormalization())
-    # flatten tf.output and feed it into dense layer
-    model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(64, activation='relu'))
-    model.add(tf.keras.layers.Dropout(0.3))
-    # output layer
-    model.add(tf.keras.layers.Dense(10, activation='softmax'))
-
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dropout(0.5)(x)
+    x = tf.keras.layers.Dense(128, activation='relu', 
+              kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    x = tf.keras.layers.Dropout(0.3)(x)
+    predictions = tf.keras.layers.Dense(10, 
+                        activation='softmax', 
+                        kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
+    
+    model = tf.keras.Model(inputs=inpt, outputs=predictions)
     return model
-
-# def build_model(input_shape):
-#     model = tf.keras.Sequential([
-#         tf.keras.layers.Conv2D(16, 3, padding='same', activation='relu', input_shape = input_shape),
-#         tf.keras.layers.MaxPooling2D(),
-#         tf.keras.layers.Conv2D(32, 3, padding='same', activation='relu'),
-#         tf.keras.layers.MaxPooling2D(),
-#         tf.keras.layers.Conv2D(64, 3, padding='same', activation='relu'),
-#         tf.keras.layers.MaxPooling2D(),
-#         tf.keras.layers.Flatten(),
-#         tf.keras.layers.Dense(128, activation='relu'),
-#         tf.keras.layers.Dense(10, activation = "softmax")
-#     ])
-#     return model
 
 
 if __name__ == "__main__":
@@ -123,7 +109,6 @@ if __name__ == "__main__":
     train_batches = (
         train_images
         .cache()
-        .shuffle(BUFFER_SIZE)
         .batch(BATCH_SIZE)
         .repeat()
         .map(normalize)
@@ -133,7 +118,7 @@ if __name__ == "__main__":
 
     model = build_model((IMAGE_HEIGHT, IMAGE_WIDTH, 3))
     model.compile(optimizer="adam",
-                loss=tf.keras.losses.CategoricalCrossentropy(from_logits=False),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
                 metrics=['accuracy'])
     model.summary()
 
