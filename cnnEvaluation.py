@@ -6,16 +6,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, ConfusionMatrixDisplay
 import json
 from tqdm import tqdm
+import pandas as pd
 
 DATA_FOLDER = "./GTZAN/melSpectrogram"
 LABELS = {"blues":0, "classical":1, "country":2, "disco":3, "hiphop":4, "jazz":5, "metal":6, "pop":7, "reggae":8, "rock":9}
 
-IMAGE_HEIGHT = 400
-IMAGE_WIDTH = 600
+IMAGE_HEIGHT = 224
+IMAGE_WIDTH = 224
 TEST_RATIO = 0.25
 VAL_RATIO = 0.15
 
-MODEL_NAME = "melSpectrogramModel"
+MODEL_NAME = "melSpectrogramSimpleModel100E"
 
 def load_image(filename, label):
     image = tf.io.read_file(filename)
@@ -52,6 +53,15 @@ def getMetrics(y_pred, y_test, modelName, returnRow=False):
         print(f"- Recall: {round(recall,4)}")
         print(f"- F1: {round(f1,4)}")
 
+def vizConfusionMat(y_pred, y_test, currentModel, save=False):
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=LABELS, )  
+    disp.plot()
+    plt.title(currentModel)
+    plt.xticks(rotation = 90)
+    plt.tight_layout()
+    plt.savefig(f"./GTZAN/results/{currentModel}.jpg") if save else plt.show()
+
 if __name__ == "__main__":
     filenames, labels = filenamesAndLabels(DATA_FOLDER)
     filenames_train, filenames_test, labels_train, labels_test = train_test_split(filenames, labels, test_size=TEST_RATIO, 
@@ -60,7 +70,8 @@ if __name__ == "__main__":
     dataset_test = tf.data.Dataset.from_tensor_slices((filenames_test, labels_test))
     test_images = dataset_test.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).map(normalize)
 
-    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0050.h5")
+
+    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0100.h5")
 
     labels_pred = []
     for element in tqdm(test_images.as_numpy_iterator()):
@@ -70,4 +81,9 @@ if __name__ == "__main__":
         labels_pred.append(currLabel)
 
     getMetrics(labels_pred, labels_test, MODEL_NAME)
+    
+    # results = pd.DataFrame(columns=["modelName","acc","precision","recall","f1"])
+    # results.loc[len(results)] = getMetrics(labels_pred, labels_test, MODEL_NAME, returnRow=True)
+    # results.to_csv(f"./GTZAN/results/{MODEL_NAME}.csv", index=False)
+    # vizConfusionMat(labels_pred, labels_test, MODEL_NAME, save=True)
 

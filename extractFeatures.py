@@ -53,24 +53,33 @@ def extractImages(pathList, SR=22050, HOP_LEN = 256, FRAME_LEN = 512):
     x, _ = librosa.load(path, sr=SR)
 
     # Spectrogram
-    stft = librosa.stft(x, n_fft=FRAME_LEN, hop_length=HOP_LEN)
-    stft_db = librosa.amplitude_to_db(abs(stft))
+    stft = librosa.stft(x, hop_length=HOP_LEN)
+    stft_db = librosa.amplitude_to_db(abs(stft), ref=np.max)
     _, ax = plt.subplots(dpi=128)
     librosa.display.specshow(stft_db, y_axis="log", sr=SR)
     ax.set_axis_off()
     plt.savefig(os.path.join("./GTZAN/spectrogram",songName+".png"),bbox_inches='tight', pad_inches=0)
 
     # Mel-Spectrogram
-    melStft = librosa.feature.melspectrogram(x, sr=SR, n_fft=FRAME_LEN, hop_length=HOP_LEN)
-    melStft_db = librosa.amplitude_to_db(abs(melStft))
+    melStft = librosa.feature.melspectrogram(x, sr=SR, hop_length=HOP_LEN)
+    melStft_db = librosa.amplitude_to_db(melStft, ref=np.max)
     _, ax = plt.subplots(dpi=128)
     librosa.display.specshow(melStft_db, y_axis="mel", sr=SR)
     ax.set_axis_off()
     plt.savefig(os.path.join("./GTZAN/melSpectrogram",songName+".png"),bbox_inches='tight', pad_inches=0)
 
+    step = melStft_db.shape[1]//10
+    clipsList = [melStft_db[:,i:i+step] for i in range(0, melStft_db.shape[1], step)]
+    clipsList.pop()
+    for i, clip in enumerate(clipsList):
+        _, ax = plt.subplots(dpi=128)
+        librosa.display.specshow(clip, y_axis="mel", sr=SR)
+        ax.set_axis_off()
+        plt.savefig(os.path.join("./GTZAN/melSpectrogram3s",f"{songName}.{i}.png"),bbox_inches='tight', pad_inches=0)
+
     # Mel-MFCC
     mfcc = librosa.feature.mfcc(x, sr=SR, n_mfcc=20)
-    mfcc_db = librosa.amplitude_to_db(abs(mfcc))
+    mfcc_db = librosa.amplitude_to_db(mfcc, ref=np.max)
     _, ax = plt.subplots(dpi=128)
     librosa.display.specshow(mfcc_db, y_axis="mel", sr=SR)
     ax.set_axis_off()

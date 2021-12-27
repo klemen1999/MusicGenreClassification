@@ -8,15 +8,15 @@ import json
 DATA_FOLDER = "./GTZAN/mfcc"
 LABELS = {"blues":0, "classical":1, "country":2, "disco":3, "hiphop":4, "jazz":5, "metal":6, "pop":7, "reggae":8, "rock":9}
 
-IMAGE_HEIGHT = 400
-IMAGE_WIDTH = 600
+IMAGE_HEIGHT = 224
+IMAGE_WIDTH = 224
 TEST_RATIO = 0.25
 VAL_RATIO = 0.15
 
 BATCH_SIZE = 16
-EPOCHS = 50
+EPOCHS = 100
 
-MODEL_NAME = "mfccModel"
+MODEL_NAME = "mfccSimpleModel100E"
 
 def load_image(filename, label):
     image = tf.io.read_file(filename)
@@ -61,7 +61,7 @@ def conv_block(x, n_filters,filter_size=(3, 3), pool_size=(2, 2),stride=(1, 1)):
     x = tf.keras.layers.Conv2D(n_filters, filter_size, strides=(1, 1), padding='same')(x)
     x = tf.keras.layers.Activation('relu')(x)
     x = tf.keras.layers.MaxPooling2D(pool_size=pool_size, strides=stride)(x)
-    x = tf.keras.layers.Dropout(0.4)(x)
+    x = tf.keras.layers.Dropout(0.2)(x)
     return x
 
 def build_model(input_shape):
@@ -73,7 +73,7 @@ def build_model(input_shape):
     x = conv_block(x, 256,stride=(2,2))
 
     x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dropout(0.5)(x)
+    x = tf.keras.layers.Dropout(0.3)(x)
     x = tf.keras.layers.Dense(128, activation='relu', 
               kernel_regularizer=tf.keras.regularizers.l2(0.01))(x)
     x = tf.keras.layers.Dropout(0.3)(x)
@@ -109,6 +109,7 @@ if __name__ == "__main__":
     train_batches = (
         train_images
         .cache()
+        .shuffle(BUFFER_SIZE)
         .batch(BATCH_SIZE)
         .repeat()
         .map(normalize)
@@ -143,7 +144,3 @@ if __name__ == "__main__":
     plt.legend()
     plt.tight_layout()
     plt.savefig(f"./GTZAN/checkpoints/{MODEL_NAME}/loss.jpg")
-
-
-    
-    
