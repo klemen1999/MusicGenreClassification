@@ -60,6 +60,15 @@ def extractImages(pathList, SR=22050, HOP_LEN = 256, FRAME_LEN = 512):
     ax.set_axis_off()
     plt.savefig(os.path.join("./GTZAN/spectrogram",songName+".png"),bbox_inches='tight', pad_inches=0)
 
+    step = stft_db.shape[1]//10
+    clipsList = [stft_db[:,i:i+step] for i in range(0, stft_db.shape[1], step)]
+    clipsList.pop()
+    for i, clip in enumerate(clipsList):
+        _, ax = plt.subplots(dpi=128)
+        librosa.display.specshow(clip, y_axis="mel", sr=SR)
+        ax.set_axis_off()
+        plt.savefig(os.path.join("./GTZAN/spectrogram3s",f"{songName}.{i}.png"),bbox_inches='tight', pad_inches=0)
+
     # Mel-Spectrogram
     melStft = librosa.feature.melspectrogram(x, sr=SR, hop_length=HOP_LEN)
     melStft_db = librosa.amplitude_to_db(melStft, ref=np.max)

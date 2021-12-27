@@ -8,7 +8,7 @@ import json
 from tqdm import tqdm
 import pandas as pd
 
-DATA_FOLDER = "./GTZAN/melSpectrogram"
+DATA_FOLDER = "./GTZAN/spectrogram"
 LABELS = {"blues":0, "classical":1, "country":2, "disco":3, "hiphop":4, "jazz":5, "metal":6, "pop":7, "reggae":8, "rock":9}
 
 IMAGE_HEIGHT = 224
@@ -16,7 +16,7 @@ IMAGE_WIDTH = 224
 TEST_RATIO = 0.25
 VAL_RATIO = 0.15
 
-MODEL_NAME = "melSpectrogramSimpleModel100E"
+MODEL_NAME = "spectrogramSimpleModel-3s-50E"
 
 def load_image(filename, label):
     image = tf.io.read_file(filename)
@@ -71,7 +71,8 @@ if __name__ == "__main__":
     test_images = dataset_test.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).map(normalize)
 
 
-    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0100.h5")
+    model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0050.h5")
+    # model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/modelLast.h5")
 
     labels_pred = []
     for element in tqdm(test_images.as_numpy_iterator()):
@@ -80,10 +81,40 @@ if __name__ == "__main__":
         currLabel = np.argmax(model.predict(imageToPredict)[0])
         labels_pred.append(currLabel)
 
-    getMetrics(labels_pred, labels_test, MODEL_NAME)
+    # getMetrics(labels_pred, labels_test, MODEL_NAME)
+
+    results = pd.DataFrame(columns=["modelName","acc","precision","recall","f1"])
+    results.loc[len(results)] = getMetrics(labels_pred, labels_test, MODEL_NAME, returnRow=True)
+    results.to_csv(f"./GTZAN/results/{MODEL_NAME}.csv", index=False)
+    vizConfusionMat(labels_pred, labels_test, MODEL_NAME, save=True)
+
+
+    # Majority voting
+    # filenames, labels = filenamesAndLabels(DATA_FOLDER)
+    # filenames_train, filenames_test, labels_train, labels_test = train_test_split(filenames, labels, test_size=TEST_RATIO, 
+    #                                                 random_state=42, shuffle=True, stratify=labels)
+    # model = tf.keras.models.load_model(f"./GTZAN/checkpoints/{MODEL_NAME}/model0050.h5")
     
+    # labels_pred  =[]
+    # for filename in tqdm(filenames_test):
+    #     currLabelsList = []
+    #     filenameList = filename.split("\\")
+    #     for i in range(10):
+    #         currFilename = "./GTZAN/spectrogram3s/"+filenameList[1][:-4]+f".{i}.png"
+    #         try:
+    #             image = tf.io.read_file(currFilename)
+    #             image = tf.io.decode_png(image, channels=3)
+    #             image = tf.image.resize(image, [IMAGE_HEIGHT, IMAGE_WIDTH])
+    #             image = tf.cast(image, tf.float32) / 255.0
+    #             imageToPredict = image[None,:,:,:]
+    #             currLabel = np.argmax(model.predict(imageToPredict)[0])
+    #             currLabelsList.append(currLabel)
+    #         except:
+    #             print(f"File missing: {currFilename}")
+    #     currFinalLabel = max(set(currLabelsList), key=currLabelsList.count)
+    #     labels_pred.append(currFinalLabel)
+
     # results = pd.DataFrame(columns=["modelName","acc","precision","recall","f1"])
     # results.loc[len(results)] = getMetrics(labels_pred, labels_test, MODEL_NAME, returnRow=True)
-    # results.to_csv(f"./GTZAN/results/{MODEL_NAME}.csv", index=False)
-    # vizConfusionMat(labels_pred, labels_test, MODEL_NAME, save=True)
-
+    # results.to_csv(f"./GTZAN/results/{MODEL_NAME}-Majority.csv", index=False)
+    # vizConfusionMat(labels_pred, labels_test, MODEL_NAME+"-Majority", save=True)
