@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+mfccSimpleModel100E,0.544,0.5418,0.544,0.5383

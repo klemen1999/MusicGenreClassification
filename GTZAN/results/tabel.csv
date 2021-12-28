@@ -1,0 +1,8 @@
+modelName,acc,precision,recall,f1
+baseline,0.1,0.01,0.1,0.0182
+kNN,0.68,0.6932,0.68,0.6789
+randomForest,0.732,0.7331,0.732,0.7314
+logRegression,0.756,0.7558,0.756,0.7517
+SVM,0.784,0.7892,0.784,0.7811
+GradientBoosting,0.74,0.7466,0.74,0.7374
+MultilayerPerceptron,0.752,0.7599,0.752,0.7479

@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+spectrogramSimpleModel100E,0.724,0.7528,0.724,0.7267

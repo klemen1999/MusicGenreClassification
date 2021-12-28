@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+spectrogramDenseNet121-ImageNet-50E,0.552,0.5502,0.552,0.5173

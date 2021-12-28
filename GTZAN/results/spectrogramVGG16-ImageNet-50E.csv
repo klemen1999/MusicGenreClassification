@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+spectrogramVGG16-ImageNet-50E,0.6,0.5754,0.6,0.5689

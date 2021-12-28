@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+spectrogramSimpleModel-3s-50E,0.841,0.8688,0.841,0.8464

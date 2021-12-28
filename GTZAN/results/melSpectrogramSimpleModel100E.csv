@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+melSpectrogramSimpleModel100E,0.608,0.6374,0.608,0.6123

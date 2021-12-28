@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+melSpectrogramResNet101V2-ImageNet-50E,0.516,0.5159,0.516,0.504

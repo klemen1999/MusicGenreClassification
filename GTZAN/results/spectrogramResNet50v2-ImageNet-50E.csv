@@ -1,0 +1,2 @@
+modelName,acc,precision,recall,f1
+spectrogramResNet50v2-ImageNet-50E,0.58,0.6002,0.58,0.5703
