@@ -90,6 +90,7 @@ if __name__ == "__main__":
 
 
     # Majority voting
+    
     # filenames, labels = filenamesAndLabels(DATA_FOLDER)
     # filenames_train, filenames_test, labels_train, labels_test = train_test_split(filenames, labels, test_size=TEST_RATIO, 
     #                                                 random_state=42, shuffle=True, stratify=labels)

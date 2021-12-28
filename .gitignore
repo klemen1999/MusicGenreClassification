@@ -134,4 +134,5 @@ gtzan.rar
 .RData
 .RHistory
 
-GTZAN/
+GTZAN/*
+!GTZAN/results/
