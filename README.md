@@ -15,9 +15,13 @@ Project for machine learning course where the goal is to classify music into the
   - [x] Evaluate features with relifF or similar 
   - [x] Find the best parameters for each method
   - [x] Save results
-- [ ] Extract image features from data
-- [ ] Run different CNNs on image data
-- [ ] Run experiment on different dataset as well
+- [x] Extract image features from data
+- [x] Run different CNNs on image data
+  - [x] Run my CNN
+  - [x] Transfer learning
+  - [x] CNN + SVM
+  - [x] CNN on 3s clips
+  - [x] Evaluate and compare 
 
 ## Helpful Links and References
 
@@ -25,5 +29,4 @@ Project for machine learning course where the goal is to classify music into the
 - [Music Genre Classification and Recommendation by Using Machine Learning Techniques](https://ieeexplore.ieee.org/document/8554016)
 - [Music Genre Classification: A Comparative Study Between Deep-Learning And Traditional Machine Learning Approaches](https://www.riteshajoodha.co.za/sitepad-data/uploads/2021/02/2020-Dhiven.pdf)
 - [Short Time Fourier Transform based music genre classification](https://www.researchgate.net/publication/325917674_Short_Time_Fourier_Transform_based_music_genre_classification)
-- [FMA: A Dataset For Music Analysis](https://arxiv.org/abs/1612.01840)
 - [Musical Genre Classification of Audio Signals](https://www.cs.cmu.edu/~gtzan/work/pubs/tsap02gtzan.pdf)
