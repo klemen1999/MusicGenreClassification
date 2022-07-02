@@ -1,6 +1,7 @@
 # MusicGenreClassification
-
-Project for machine learning course where the goal is to classify music into the right genre.
+### [Full report](./MusicGenreClassification.pdf)
+## Abstract
+In this article we present our research on applying different methods for music genre classification on a popular database GTZAN. We show our pipeline for extracting features from raw audio signal and scaling them into usable data. Then we list and describe different traditional methods like k-NN, SVM, Random forest, etc. which use these features. We also review application of deep neural networks in this domain. From our results we can deduce that SVM is the most suitable traditional model with classification accuracy of 78.4%, while CNNs work best when input is sub-sampled and majority voting is introduced at the end. Here our classification accuracy is 93.6%.
 
 ## TODO
 - [x] Data exploration
